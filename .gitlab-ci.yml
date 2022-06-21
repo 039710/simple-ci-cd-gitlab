@@ -12,6 +12,8 @@ variables:
 docker-build:
   stage: docker-build
   image: docker:latest
+  service:
+    - name: docker:latest
   script:
     - docker build --pull -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
