@@ -10,7 +10,7 @@ variables:
   PORT : 80
   
 docker-build:
-  stage: build
+  stage: docker-build
   image: docker:latest
   script:
     - docker pull $CI_REGISTRY_IMAGE:latest || true
