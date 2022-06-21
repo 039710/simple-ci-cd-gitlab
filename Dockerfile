@@ -2,7 +2,7 @@ FROM node:slim as build
 WORKDIR /app
 COPY /app /app
 RUN npm install
-RUN run build
+RUN npm run build
 
 FROM nginx
 # copy the build image to the nginx container
