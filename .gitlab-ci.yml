@@ -1,5 +1,4 @@
 stages:
-  - build
   - docker-build
   - deploy
 
@@ -10,18 +9,7 @@ variables:
   PORT_NUMBER : 3000
   PORT : 80
 
-build:
-  stage: build
-  image: node:slim
-  script:
-    - npm install
-    - npm run build
-    - echo "Build complete"
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - build
-      - node_modules/
+
   
 docker-build:
   stage: docker-build
