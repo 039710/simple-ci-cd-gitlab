@@ -13,9 +13,9 @@ variables:
   
 docker-build:
   stage: docker-build
-  image: docker
+  image: gitlab/dind
   services:
-    - name: docker:19.03.8-dind
+    - name: docker:dind
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
