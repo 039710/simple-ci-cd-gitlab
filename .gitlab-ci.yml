@@ -1,0 +1,46 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+  APP_NAME: test-react
+  PORT_NUMBER : 3000
+  PORT : 80
+
+build:
+  stage: build
+  image: node:slim
+  script:
+    - npm install
+    - npm run build
+    - echo "Build complete"
+  artifacts:
+    expire_in:
+      - 1 hour
+    paths:
+      - build
+  
+docker-build:
+  stage: build
+  image: docker
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest -t $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - echo "Registry image:" $CI_REGISTRY_IMAGE
+
+depyloy:
+  stage: deploy
+  script:
+    - echo "Deploying to $CI_REGISTRY_IMAGE"
+    - docker tag "$CI_REGISTRY_IMAGE" "$TAG_LATEST"
+    - chmod og= $ID_RSA
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f $APP_NAME"
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $PORT:$PORT_NUMBER --name $APP_NAME $CI_REGISTRY_IMAGE"
+
+
