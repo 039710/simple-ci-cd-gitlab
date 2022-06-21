@@ -23,7 +23,7 @@ build:
       - build
   
 docker-build:
-  stage: build
+  stage: docker-build
   image: docker
   services:
     - name: docker:19.03.8-dind
