@@ -8,26 +8,20 @@ variables:
   APP_NAME: test-react
   PORT_NUMBER : 3000
   PORT : 80
-
-
   
-docker-build:
-  stage: docker-build
+docker_build:
+  stage: build
   image: docker:latest
-  services:
-    - name: docker:19.03.8-dind
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest -t $CI_REGISTRY_IMAGE:latest
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push $CI_REGISTRY_IMAGE:latest
-    - echo "Registry image:" $CI_REGISTRY_IMAGE
 
 depyloy:
   stage: deploy
   script:
     - echo "Deploying to $CI_REGISTRY_IMAGE"
-    - docker tag "$CI_REGISTRY_IMAGE" "$TAG_LATEST"
     - chmod og= $ID_RSA
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f $APP_NAME"
