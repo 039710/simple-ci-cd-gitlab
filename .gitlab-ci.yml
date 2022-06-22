@@ -15,7 +15,7 @@ docker-build:
     - name: docker:latest
   script:
     - docker build -t "$TAG_LATEST" .
-
+    - docker push $TAG_LATEST
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 
