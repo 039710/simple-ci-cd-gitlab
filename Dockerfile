@@ -1,6 +1,6 @@
 FROM node:slim as build
 WORKDIR /app
-COPY /app /app
+COPY . /app
 RUN npm install
 RUN npm run build
 
