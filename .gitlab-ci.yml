@@ -15,9 +15,9 @@ docker-build:
   services:
     - name: docker:latest
   script:
-    - docker build --pull --rm -t $TAG_COMMIT .
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker push $TAG_COMMIT
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+    - echo "Registry image:" $CI_REGISTRY_IMAGE
 
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -30,7 +30,7 @@ depyloy:
     - echo "$SERVER_IP"
     - chmod og= $ID_RSA
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 28189 "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 28189 "docker pull $TAG_COMMIT"
+    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 28189 "docker pull $CI_REGISTRY_IMAGE"
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 28189 "docker container rm -f $APP_NAME || true"
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP -p 28189 "docker run -d -p $PORT:$PORT_NUMBER --name $APP_NAME $TAG_COMMIT"
 
