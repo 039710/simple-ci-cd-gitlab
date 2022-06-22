@@ -15,7 +15,8 @@ docker-build:
     - name: docker:latest
   script:
     - docker pull $TAG_LATEST || true
-    - docker build --pull --rm -f -t $TAG_LATEST .
+    # - docker build --pull --rm -f -t $TAG_LATEST .
+    - docker build -t $TAG_LATEST .
 
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
