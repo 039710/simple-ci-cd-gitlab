@@ -7,7 +7,7 @@ variables:
   TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
   APP_NAME: test-react
   PORT_NUMBER : 3000
-  PORT : 80
+  PORT : 8080
   
 docker-build:
   stage: docker-build
